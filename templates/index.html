@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html
+    lang="en"
+    dir="ltr"
+>
+
+<head>
+    <meta charset="utf-8">
+    <title>video.js</title>
+    <link
+        href="https://vjs.zencdn.net/7.5.4/video-js.css"
+        rel="stylesheet"
+    >
+    <script src="https://vjs.zencdn.net/7.5.4/video.js"></script>
+    <script src="https://unpkg.com/videojs-flash/dist/videojs-flash.js"></script>
+
+    <script
+        type="text/javascript"
+        src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"
+    ></script>
+    <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
+        integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
+        crossorigin="anonymous"
+    >
+    <script
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"
+        integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
+        crossorigin="anonymous"
+    ></script>
+</head>
+
+<body>
+    <video
+        id="my-player"
+        class="video-js"
+        controls
+    >
+        <!-- <source src="rtmp://live.hkstv.hk.lxdns.com/live/hks2" type="rtmp/flv"> -->
+        <source
+            src="rtmp://13.230.178.212/videochat/?s=20"
+            type="rtmp/flv"
+        >
+        <p class="vjs-no-js">
+            not support
+        </p>
+    </video>
+    <button
+        class="btn btn-primary"
+        type="button"
+        id="button-add"
+    >Submit form
+    </button>
+    <script type="text/javascript">
+        var player = videojs('my-player', {
+            width: 640,
+            heigh: 264
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+            socket.on('connect', function () {
+                console.log('Connect successful !!');
+            });
+            socket.on('response', function (data, callback) {
+                console.log(data);
+                callback("GG")
+            });
+
+            $("#button-add").click(function () {
+                socket.emit("receive", {
+                    username: "eddie"
+                }, function (error, message) {
+                    console.log(error);
+                    console.log(message);
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>
