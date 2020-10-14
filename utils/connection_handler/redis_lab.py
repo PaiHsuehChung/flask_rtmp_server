@@ -38,7 +38,9 @@ class RedisHandler():
 
 
     def expired_notification(self, msg):
-        print(msg)
+        self.logger.debug(f"Expired Message : {msg}")
+        token = msg.get('data').split(":")[-1]
+        self.redis.hdel('tokens', token)
 
 
 

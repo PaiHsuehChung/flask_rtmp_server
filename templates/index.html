@@ -42,51 +42,52 @@
 </head>
 
 <body>
-    <video
-        id="my-player"
-        class="video-js"
-        controls
-    >
-        <!-- <source src="rtmp://live.hkstv.hk.lxdns.com/live/hks2" type="rtmp/flv"> -->
-        <source
-            src="rtmp://13.230.178.212/videochat/?s=20"
-            type="rtmp/flv"
-        >
-        <p class="vjs-no-js">
-            not support
-        </p>
-    </video>
+
     <button
         class="btn btn-primary"
         type="button"
         id="button-add"
     >Submit form
     </button>
-    <script type="text/javascript">
-        var player = videojs('my-player', {
-            width: 640,
-            heigh: 264
-        });
-    </script>
+
 
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-            socket.on('connect', function () {
-                console.log('Connect successful !!');
-            });
-            socket.on('response', function (data, callback) {
-                console.log(data);
-                callback("GG")
-            });
+            var socket;
+            var data = new FormData();
+            data.append("username", "eddiepai")
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://18.182.8.76/api/getAdminTicket", true);
+            xhr.onload = function () {
+                token = JSON.parse(this.responseText).token;
+                url = location.protocol + '//' + document.domain + ':' + location.port + "?token=" + token;
+                console.log(url);
+                socket = io.connect(url);
+                socket.on('connect', function () {
+                    console.log('Connect successful !!');
+                });
+
+                socket.on("receive_request", function (data) {
+                    console.log(data);
+                });
+
+
+
+            };
+            xhr.send(data)
 
             $("#button-add").click(function () {
-                socket.emit("receive", {
-                    username: "eddie"
-                }, function (error, message) {
-                    console.log(error);
-                    console.log(message);
+                socket.emit("request_center", {
+                    device: "demo",
+                    username: "demo",
+                    isVideo: true,
+                    isDetect: false,
+                    signal_feq: 1,
+                    room: "demo"
+                }, function (msg, status) {
+                    console.log(msg)
                 });
             });
 
